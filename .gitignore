@@ -4,4 +4,4 @@ server/.env
 *.log
 .DS_Store
 Thumbs.db
-AGENTS.md
+server/bin/stockfish/*.exe
