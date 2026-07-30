@@ -1,57 +1,111 @@
-# Chess
+# Chess + Stockfish
 
-Real-time chess web app. Play vs Stockfish inside Telegram Mini App.
+Real-time chess web app. Play against Stockfish inside Telegram Mini App.
 
-## Stack
+## Live Demo
 
-- **Backend**: Node.js, Express, Socket.IO
-- **Frontend**: Vite + React
-- **Engine**: Stockfish (UCI via `child_process`)
-- **Telegram**: `@telegram-apps/sdk` (theme, initData auth)
+The app runs as a [Telegram Mini App](https://core.telegram.org/bots/webapps). To try it:
 
-## Commands
+1. Start a tunnel: `npx ngrok http 5173`
+2. [@BotFather](https://t.me/BotFather) → your bot → Bot Settings → Menu Button → paste the tunnel URL
+3. Open the bot in Telegram and tap the menu button
 
-| command | description |
+## Screenshot
+
+| | |
 |---|---|
-| `npm run dev` | server (--watch) + client (Vite) |
-| `npm start` | server only |
-| `npm run dev:server` | server only (--watch) |
-| `npm run dev:client` | client only (Vite) |
-
-## Structure
-
-```
-server/
-  src/
-    engine/       — Stockfish UCI wrapper
-    game/         — GameRoom, GameManager, chess clocks
-    telegram/     — initData HMAC verification
-    ws/           — Socket.IO event handlers
-    index.js      — entrypoint (Express + Socket.IO)
-client/
-  src/
-    components/   — Board, ClockDisplay, GameInfo, etc.
-    lib/          — chess.js wrapper, socket helper, time utils
-    App.jsx       — root component
-    main.jsx      — entrypoint
-```
+| ![start](screenshots/01_start.png) | ![game](screenshots/02_game.png) |
+| ![check](screenshots/03_shah.png) | ![timeout](screenshots/04_time_of.png) |
+| ![mate](screenshots/05_mate.png) | |
 
 ## Features
 
-- Play vs Stockfish (Easy / Medium / Hard)
-- Time controls: Bullet, Blitz, Rapid, Classic (with increment)
-- Chess clocks (100ms tick, auto-start, increment on move)
-- Undo move (preserves move history)
-- Telegram Mini App theme colors (fallbacks in browser)
+- Play vs Stockfish with **Easy / Medium / Hard** difficulty
+- Time controls: **Bullet** (1+0), **Blitz** (3+0), **Rapid** (5+3), **Classic** (15+10)
+- Chess clocks (100 ms server tick, increment on each move)
+- **Undo** move (preserves full move history)
+- Legal move highlights — white dots for empty squares, red outline for captures
 - Board flip when playing black
-- Legal move highlight (dot for empty squares, red outline for captures)
+- Sound effects (move, capture, check, checkmate) with on/off toggle
+- Telegram Mini App theming (adapts to Telegram color scheme)
+- Check and checkmate visual feedback (king square highlight)
 
-## Telegram setup
+## Architecture
 
-1. Start a tunnel: `npx ngrok http 5173` or `npx localtunnel --port 5173`
-2. [@BotFather](https://t.me/BotFather) → `/mybots` → your bot → Bot Settings → Menu Button → set tunnel URL
-3. `TELEGRAM_BOT_TOKEN` in `server/.env` (optional — auth middleware skips when empty)
+```
+┌─ Client (Vite + React) ──────────────────────┐
+│  Board, ClockDisplay, GameInfo, MoveHistory   │
+│  socket.io-client  ⇄  websocket               │
+└───────────────────────────────────────────────┘
+                      ↕
+┌─ Server (Node.js + Express + Socket.IO) ──────┐
+│  GameRoom (chess.js state + clocks + timer)   │
+│  StockfishEngine (UCI via child_process)      │
+│  Telegram initData HMAC auth middleware        │
+└───────────────────────────────────────────────┘
+```
 
-## Status
+- **Server chess.js** is the single source of truth for all position validation and game logic.
+- **Client chess.js** is used only for legal-move display and board rendering.
+- **Stockfish** runs as a child process (one per game). Communication via UCI protocol over stdin/stdout.
+- **Clocks** are decremented server-side every 100 ms and broadcast to the client.
 
-Working prototype.
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Backend | Node.js, Express, Socket.IO, chess.js |
+| Frontend | Vite, React, socket.io-client, chess.js, @telegram-apps/sdk |
+| Engine | Stockfish (UCI, per-game child_process) |
+| Auth | Telegram initData HMAC-SHA256 (optional, skipped without TELEGRAM_BOT_TOKEN) |
+
+## How It Works
+
+1. Player selects **color**, **difficulty**, and **time control** → clicks *Start Game*.
+2. Server creates a `GameRoom` with a fresh `chess.js` instance and launches a Stockfish process.
+3. If it's Stockfish's turn, the server sends the current FEN via UCI, parses `bestmove`, and applies it.
+4. Both player and Stockfish moves are validated server-side and broadcast to the client via Socket.IO.
+5. A server-side interval (100 ms) decrements the active clock, adds increment after each move, and sends `time_update` events.
+6. On timeout, checkmate, or draw the game ends — clock display turns red.
+
+## Installation
+
+Clone the repo and install dependencies:
+
+```bash
+git clone https://github.com/DVR-Claw-Aist/Chess-Stockfish-Base.git
+cd Chess-Stockfish-Base
+npm install
+```
+
+Place the Stockfish binary at `server/bin/stockfish/stockfish-windows-x86-64-sse41-popcnt.exe` (or adjust the path in `stockfish.js`).
+
+Create `server/.env`:
+
+```
+PORT=3000
+CLIENT_ORIGIN=http://localhost:5173
+TELEGRAM_BOT_TOKEN=your_bot_token  # optional — auth is skipped if empty
+```
+
+Run both server and client:
+
+```bash
+npm run dev
+```
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Server + client (concurrently) |
+| `npm start` | Server only |
+| `npm run dev:server` | Server only (--watch) |
+| `npm run dev:client` | Client only (Vite) |
+
+## Roadmap
+
+- [ ] Position evaluation bar
+- [ ] Move list with standard algebraic notation
+- [ ] PGN export / import
+- [ ] Takeback and draw offers
+- [ ] Multiplayer (human vs human)
+- [ ] i18n (EN / RU)

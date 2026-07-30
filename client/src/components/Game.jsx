@@ -92,10 +92,14 @@ function Game() {
       handleSound(result);
     });
 
-    socket.on('time_update', ({ w, b, active, roomId: rId }) => {
+    socket.on('time_update', ({ w, b, active, roomId: rId, gameOver }) => {
       if (rId && rId !== roomIdRef.current) return;
       setClocks({ w, b });
       setClockActive(active);
+      if (gameOver) {
+        setIsGameOver(true);
+        setGameState('gameover');
+      }
     });
 
     socket.on('error', ({ message }) => {

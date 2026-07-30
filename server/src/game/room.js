@@ -48,7 +48,7 @@ export class GameRoom {
         this.state = 'gameover';
       }
 
-      this._onTick?.({ w: this.clocks.w, b: this.clocks.b, active });
+      this._onTick?.({ w: this.clocks.w, b: this.clocks.b, active, gameOver: this.state === 'gameover' });
     }, 100);
   }
 
