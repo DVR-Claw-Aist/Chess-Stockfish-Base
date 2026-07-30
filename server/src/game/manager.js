@@ -1,10 +1,10 @@
+import { randomUUID } from 'crypto';
 import { GameRoom } from './room.js';
 
 const rooms = new Map();
-let nextId = 1;
 
 export function createRoom(mode = 'stockfish', playerColor = 'w', timeControl = null, onTick = null, difficulty = 'medium') {
-  const id = String(nextId++);
+  const id = randomUUID();
   const room = new GameRoom(id, mode, playerColor, timeControl, onTick, difficulty);
   rooms.set(id, room);
   return room;
