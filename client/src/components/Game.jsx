@@ -7,6 +7,7 @@ import MoveHistory from './MoveHistory.jsx';
 import ClockDisplay from './ClockDisplay.jsx';
 import TimeControlSelector from './TimeControlSelector.jsx';
 import DifficultySelector from './DifficultySelector.jsx';
+import { playSound, setSoundEnabled, isSoundEnabled } from '../lib/sounds.js';
 
 function Game() {
   const [board, setBoard] = useState([]);
@@ -25,6 +26,15 @@ function Game() {
   const [clockActive, setClockActive] = useState(null);
   const [timeControl, setTimeControl] = useState({ initial: 180, increment: 0 });
   const [difficulty, setDifficulty] = useState('medium');
+  const [soundEnabled, setSoundEnabledState] = useState(true);
+
+  const handleSoundToggle = useCallback(() => {
+    setSoundEnabledState(prev => {
+      const next = !prev;
+      setSoundEnabled(next);
+      return next;
+    });
+  }, []);
   const roomIdRef = useRef(null);
 
   useEffect(() => { roomIdRef.current = roomId; }, [roomId]);
@@ -49,6 +59,13 @@ function Game() {
       setClocks(state.clocks || null);
     });
 
+    function handleSound(result) {
+      if (result.isCheckmate) playSound('checkmate');
+      else if (result.isCheck) playSound('check');
+      else if (result.move && result.move.san && result.move.san.includes('x')) playSound('capture');
+      else playSound('move');
+    }
+
     socket.on('move_result', (result) => {
       setFen(result.fen);
       setFenState(result.fen);
@@ -59,6 +76,7 @@ function Game() {
       setIsGameOver(result.isGameOver);
       setBoard(getBoard());
       setHistory(result.history || []);
+      handleSound(result);
     });
 
     socket.on('stockfish_move', (result) => {
@@ -71,6 +89,7 @@ function Game() {
       setIsGameOver(result.isGameOver);
       setBoard(getBoard());
       setHistory(result.history || []);
+      handleSound(result);
     });
 
     socket.on('time_update', ({ w, b, active, roomId: rId }) => {
@@ -134,9 +153,9 @@ function Game() {
       </div>
       <div className="game-board-col">
         {clocks && (
-          <ClockDisplay clocks={clocks} active={clockActive} turn={turn} />
+          <ClockDisplay clocks={clocks} active={clockActive} turn={turn} gameOver={isGameOver} isCheckmate={isCheckmate} />
         )}
-        <Board board={board} fen={fen} turn={turn} onMove={handleMove} flip={playerColor === 'b'} />
+        <Board board={board} fen={fen} turn={turn} onMove={handleMove} flip={playerColor === 'b'} isCheck={isCheck} isCheckmate={isCheckmate} />
       </div>
       {showSetup && !fen ? (
         <div className="setup">
@@ -149,6 +168,8 @@ function Game() {
             gameState={gameState}
             onColorChange={setPlayerColor}
             onStart={handleStart}
+            soundEnabled={soundEnabled}
+            onSoundToggle={handleSoundToggle}
           />
         </div>
       ) : (
@@ -167,6 +188,8 @@ function Game() {
             onStart={handleStart}
             onNewGame={handleNewGame}
             onUndo={handleUndo}
+            soundEnabled={soundEnabled}
+            onSoundToggle={handleSoundToggle}
           />
         </div>
       )}

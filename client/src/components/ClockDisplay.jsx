@@ -1,12 +1,15 @@
 import { formatClock } from '../lib/time.js';
 
-function ClockDisplay({ clocks, active, turn }) {
+function ClockDisplay({ clocks, active, turn, gameOver, isCheckmate }) {
+  function expired(color) {
+    return (gameOver && clocks?.[color] <= 0) || isCheckmate;
+  }
   return (
     <div className="clocks">
-      <div className={`clock ${clocks && active === 'b' ? 'active' : ''}`}>
+      <div className={`clock clock-black ${clocks && active === 'b' ? 'active' : ''} ${expired('b') ? 'expired' : ''}`}>
         black: {formatClock(clocks?.b)}
       </div>
-      <div className={`clock ${clocks && active === 'w' ? 'active' : ''}`}>
+      <div className={`clock clock-white ${clocks && active === 'w' ? 'active' : ''} ${expired('w') ? 'expired' : ''}`}>
         white: {formatClock(clocks?.w)}
       </div>
     </div>

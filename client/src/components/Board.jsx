@@ -3,7 +3,7 @@ import { pieceUnicode, getLegalMoves } from '../lib/chess.js';
 import Square from './Square.jsx';
 import PromotionDialog from './PromotionDialog.jsx';
 
-function Board({ board, fen, turn, onMove, flip }) {
+function Board({ board, fen, turn, onMove, flip, isCheck, isCheckmate }) {
   const [selected, setSelected] = useState(null);
   const [promotion, setPromotion] = useState(null);
 
@@ -96,6 +96,8 @@ function Board({ board, fen, turn, onMove, flip }) {
             isLight={(vR + vC) % 2 === 0}
             isSelected={selected?.r === r && selected?.c === c}
             isLegal={targets.has(algebraic)}
+            isCheck={isCheck && piece?.type === 'k' && piece?.color === turn}
+            isMate={isCheckmate && piece?.type === 'k' && piece?.color === turn}
             onClick={() => handleClick(vR, vC)}
           />
         ))}

@@ -69,7 +69,7 @@ export class GameRoom {
     const move = this.chess.move({ from, to, promotion });
     this._addIncrement(this.chess.turn() === 'w' ? 'b' : 'w');
     this._stopTicking();
-    if (this.clocks) this._startTicking();
+    if (this.clocks && !this.chess.isGameOver()) this._startTicking();
 
     return this._moveResult(move);
   }
@@ -94,7 +94,7 @@ export class GameRoom {
     const move = this.chess.move(engineMove);
     this._addIncrement(this.chess.turn() === 'w' ? 'b' : 'w');
     this._stopTicking();
-    if (this.clocks) this._startTicking();
+    if (this.clocks && !this.chess.isGameOver()) this._startTicking();
 
     return this._moveResult(move);
   }

@@ -1,4 +1,4 @@
-function GameInfo({ fen, turn, isCheck, isCheckmate, isDraw, isGameOver, connected, playerColor, gameState, onColorChange, onStart, onNewGame, onUndo }) {
+function GameInfo({ fen, turn, isCheck, isCheckmate, isDraw, isGameOver, connected, playerColor, gameState, onColorChange, onStart, onNewGame, onUndo, soundEnabled, onSoundToggle }) {
   return (
     <div className="game-info">
       {fen && gameState !== 'idle' && (
@@ -22,12 +22,14 @@ function GameInfo({ fen, turn, isCheck, isCheckmate, isDraw, isGameOver, connect
       {gameState === 'idle' && (
         <div className="game-info-buttons">
           <button onClick={onStart}>start game</button>
+          <button className={soundEnabled ? 'sound-btn-on' : 'sound-btn-off'} onClick={onSoundToggle}>sound {soundEnabled ? 'on' : 'off'}</button>
         </div>
       )}
       {gameState !== 'idle' && (
         <div className="game-info-buttons">
           {gameState !== 'gameover' && <button onClick={onUndo}>undo</button>}
           <button onClick={onNewGame}>new game</button>
+          <button className={soundEnabled ? 'sound-btn-on' : 'sound-btn-off'} onClick={onSoundToggle}>sound {soundEnabled ? 'on' : 'off'}</button>
         </div>
       )}
     </div>
