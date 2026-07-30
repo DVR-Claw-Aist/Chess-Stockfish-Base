@@ -5,3 +5,4 @@ server/.env
 .DS_Store
 Thumbs.db
 server/bin/stockfish/*.exe
+AGENTS.md
