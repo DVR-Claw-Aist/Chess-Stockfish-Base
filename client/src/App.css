@@ -1,0 +1,272 @@
+.game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  font-family: system-ui, sans-serif;
+  color: var(--tg-text-color, #000);
+}
+
+.connection-status {
+  text-align: center;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+.connection-status.on { color: #2e7d32; }
+.connection-status.off { color: #c62828; }
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, min(60px, calc((100vw - 28px) / 8)));
+  grid-template-rows: repeat(8, min(60px, calc((100vw - 28px) / 8)));
+  border: 2px solid var(--tg-hint-color, #333);
+}
+
+.square {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 36px;
+  user-select: none;
+  position: relative;
+}
+
+.square.light { background: #f0d9b5; }
+.square.dark { background: #b58863; }
+
+.square.light.selected.legal,
+.square.dark.selected.legal,
+.square.selected { background: #829769; }
+
+.square.legal:not(.legal-piece)::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.square.legal.legal-piece:not(.selected) .piece {
+  outline: 3px solid rgba(200, 30, 30, 0.7);
+  outline-offset: -3px;
+  border-radius: 2px;
+}
+
+.game-info {
+  font-size: 14px;
+  width: 100%;
+}
+
+.game-info-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.game-info button {
+  padding: 10px 24px;
+  cursor: pointer;
+  background: var(--tg-button-color, #333);
+  color: var(--tg-button-text-color, #fff);
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: opacity 0.15s;
+}
+
+.game-info button:hover {
+  opacity: 0.85;
+}
+
+.game-bottom {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  max-width: 480px;
+}
+.game-bottom .move-history {
+  flex: 1;
+  max-height: none;
+}
+.game-bottom .game-info {
+  width: auto;
+}
+.game-bottom .game-info-buttons {
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-top: 0;
+}
+
+.promotion-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.promotion-dialog {
+  display: flex;
+  gap: 8px;
+  background: var(--tg-secondary-bg-color, #fff);
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.promotion-btn {
+  width: 60px;
+  height: 60px;
+  font-size: 36px;
+  cursor: pointer;
+  border: 2px solid var(--tg-hint-color, #ccc);
+  border-radius: 4px;
+  background: var(--tg-secondary-bg-color, #f8f8f8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.promotion-btn:hover {
+  background: var(--tg-hint-color, #e0e0e0);
+}
+
+.move-history {
+  font-size: 13px;
+  font-family: monospace;
+  max-height: 200px;
+  overflow-y: auto;
+  width: 100%;
+  max-width: 480px;
+}
+
+.move-history .move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-history .move-num {
+  color: var(--tg-hint-color, #999);
+  min-width: 24px;
+}
+
+.difficulty-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+}
+.difficulty-selector .diff-buttons {
+  display: flex;
+  gap: 4px;
+}
+.difficulty-selector button {
+  padding: 6px 16px;
+  cursor: pointer;
+  border: 1px solid var(--tg-hint-color, #ccc);
+  background: var(--tg-secondary-bg-color, #f8f8f8);
+  color: var(--tg-text-color, #000);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: opacity 0.15s;
+}
+.difficulty-selector button:hover {
+  opacity: 0.8;
+}
+.difficulty-selector .active {
+  background: var(--tg-button-color, #333);
+  color: var(--tg-button-text-color, #fff);
+  border-color: var(--tg-button-color, #333);
+}
+
+.color-picker {
+  margin-top: 12px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.color-picker button {
+  padding: 6px 16px;
+  cursor: pointer;
+  border: 1px solid var(--tg-hint-color, #ccc);
+  background: var(--tg-secondary-bg-color, #f8f8f8);
+  color: var(--tg-text-color, #000);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: opacity 0.15s;
+}
+.color-picker button:hover {
+  opacity: 0.8;
+}
+.color-picker .active {
+  background: var(--tg-button-color, #333);
+  color: var(--tg-button-text-color, #fff);
+  border-color: var(--tg-button-color, #333);
+}
+
+.clocks {
+  display: flex;
+  gap: 0;
+  margin-bottom: 4px;
+}
+
+.clock {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 18px;
+  font-family: monospace;
+  text-align: center;
+  background: var(--tg-secondary-bg-color, #eee);
+  border: 2px solid var(--tg-hint-color, #ccc);
+  color: var(--tg-text-color, #000);
+}
+
+.clock.active {
+  background: var(--tg-bg-color, #fff);
+  border-color: var(--tg-button-color, #333);
+  font-weight: bold;
+}
+
+.game-board-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.setup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 200px;
+}
+
+.tc-selector {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.tc-selector select {
+  padding: 4px 8px;
+  font-size: 14px;
+  background: var(--tg-secondary-bg-color, #fff);
+  color: var(--tg-text-color, #000);
+  border: 1px solid var(--tg-hint-color, #ccc);
+  border-radius: 4px;
+}
