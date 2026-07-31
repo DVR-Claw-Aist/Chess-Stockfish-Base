@@ -1,5 +1,7 @@
 <div align="center">
 
+[English](README.md) · [Русский](README_RU.md)
+
 # Chess + Stockfish
 
 **Play against Stockfish directly inside Telegram Mini Apps.**
