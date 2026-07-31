@@ -1,6 +1,25 @@
+<div align="center">
+
 # Chess + Stockfish
 
-Real-time chess web app. Play against Stockfish inside Telegram Mini App.
+**Play against Stockfish directly inside Telegram Mini Apps.**
+
+[Demo](#live-demo) · [Features](#features) · [Architecture](#architecture) · [Installation](#installation) · [Roadmap](#roadmap)
+
+[![License: GPL-3.0](https://img.shields.io/github/license/DVR-Claw-Aist/Chess-Stockfish-Base)](LICENSE)
+![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?logo=nodedotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
+![Socket.IO](https://img.shields.io/badge/Socket.IO-4-010101?logo=socketdotio&logoColor=white)
+![Telegram Mini App](https://img.shields.io/badge/Telegram%20Mini%20App-2CA5E0?logo=telegram&logoColor=white)
+
+</div>
+
+![demo](screenshots/demo.gif)
+
+## Why This Project?
+
+> Built to explore WebSocket architecture, server-authoritative chess logic and Telegram Mini Apps integration.
 
 ## Live Demo
 
@@ -10,7 +29,7 @@ The app runs as a [Telegram Mini App](https://core.telegram.org/bots/webapps). T
 2. [@BotFather](https://t.me/BotFather) → your bot → Bot Settings → Menu Button → paste the tunnel URL
 3. Open the bot in Telegram and tap the menu button
 
-## Screenshot
+## Screenshots
 
 | | |
 |---|---|
