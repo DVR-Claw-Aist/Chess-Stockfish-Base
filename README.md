@@ -8,7 +8,7 @@
 
 [![License: GPL-3.0](https://img.shields.io/github/license/DVR-Claw-Aist/Chess-Stockfish-Base)](LICENSE)
 ![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?logo=nodedotjs&logoColor=white)
-![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
 ![Socket.IO](https://img.shields.io/badge/Socket.IO-4-010101?logo=socketdotio&logoColor=white)
 ![Telegram Mini App](https://img.shields.io/badge/Telegram%20Mini%20App-2CA5E0?logo=telegram&logoColor=white)

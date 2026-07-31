@@ -66,8 +66,8 @@ export class GameRoom {
   }
 
   async makeMove(from, to, promotion) {
-    this.fenHistory.push({ fen: this.chess.fen(), histLen: this.chess.history().length });
     const move = this.chess.move({ from, to, promotion });
+    this.fenHistory.push({ fen: this.chess.fen(), histLen: this.chess.history().length });
     this._addIncrement(this.chess.turn() === 'w' ? 'b' : 'w');
     this._stopTicking();
     if (this.clocks && !this.chess.isGameOver()) this._startTicking();

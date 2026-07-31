@@ -61,6 +61,11 @@ export function registerHandlers(io) {
         return;
       }
 
+      if (room.mode === 'stockfish' && room.turn !== room.playerColor) {
+        socket.emit('error', { message: 'not your turn' });
+        return;
+      }
+
       try {
         const result = await room.makeMove(from, to, promotion);
         io.to(roomId).emit('move_result', result);
@@ -94,6 +99,10 @@ export function registerHandlers(io) {
     socket.on('undo_move', ({ roomId } = {}) => {
       const room = getRoom(roomId);
       if (!room || room.fenHistory.length === 0 || !room.sockets.has(socket.id)) return;
+      if (room._engineBusy) {
+        socket.emit('error', { message: 'engine is thinking' });
+        return;
+      }
 
       const result = room.undoMove();
       if (result) {

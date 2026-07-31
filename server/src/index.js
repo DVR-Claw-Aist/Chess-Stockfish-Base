@@ -2,11 +2,14 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
 import { config } from 'dotenv';
 import { verifyInitData } from './telegram/verify.js';
 import { registerHandlers } from './ws/handlers.js';
 
-config();
+const __dirname = dirname(fileURLToPath(import.meta.url));
+config({ path: resolve(__dirname, '..', '.env') });
 
 const app = express();
 const httpServer = createServer(app);
@@ -29,7 +32,7 @@ io.use((socket, next) => {
   next();
 });
 
-app.use(cors());
+app.use(cors({ origin: process.env.CLIENT_ORIGIN || '*' }));
 app.use(express.json());
 
 app.get('/health', (_req, res) => {
