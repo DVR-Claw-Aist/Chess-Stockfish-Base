@@ -1,4 +1,4 @@
-function GameInfo({ fen, turn, isCheck, isCheckmate, isDraw, isGameOver, connected, playerColor, gameState, onColorChange, onStart, onNewGame, onUndo, soundEnabled, onSoundToggle }) {
+function GameInfo({ fen, turn, isCheck, isCheckmate, isDraw, isGameOver, connected: _connected, playerColor, gameState, onColorChange, onStart, onNewGame, onUndo, soundEnabled, onSoundToggle }) {
   return (
     <div className="game-info">
       {fen && gameState !== 'idle' && (

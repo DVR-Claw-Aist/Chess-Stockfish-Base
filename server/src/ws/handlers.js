@@ -35,12 +35,12 @@ export function registerHandlers(io) {
 
     socket.on('start_game', async ({ roomId } = {}) => {
       const room = getRoom(roomId);
-      if (!room || room.state !== 'paused') return;
+      if (!room || room.state !== 'paused' || !room.sockets.has(socket.id)) return;
 
       room.startGame();
       io.to(roomId).emit('game_state', room.getState());
 
-        if (room.mode === 'stockfish' && room.turn !== room.playerColor) {
+      if (room.mode === 'stockfish' && room.turn !== room.playerColor) {
         try {
           const result = await room.getBestMove();
           if (!result) return;
@@ -56,7 +56,7 @@ export function registerHandlers(io) {
 
     socket.on('make_move', async ({ roomId, from, to, promotion } = {}) => {
       const room = getRoom(roomId);
-      if (!room || room.state !== 'playing') {
+      if (!room || room.state !== 'playing' || !room.sockets.has(socket.id)) {
         socket.emit('error', { message: 'room not found or game not started' });
         return;
       }
@@ -93,7 +93,7 @@ export function registerHandlers(io) {
 
     socket.on('undo_move', ({ roomId } = {}) => {
       const room = getRoom(roomId);
-      if (!room || room.fenHistory.length === 0) return;
+      if (!room || room.fenHistory.length === 0 || !room.sockets.has(socket.id)) return;
 
       const result = room.undoMove();
       if (result) {
@@ -104,6 +104,8 @@ export function registerHandlers(io) {
 
     socket.on('leave_game', ({ roomId } = {}) => {
       if (roomId) {
+        const room = getRoom(roomId);
+        if (!room || !room.sockets.has(socket.id)) return;
         socket.leave(roomId);
         removeRoom(roomId);
         removeSocketFromRoom(socket.id);

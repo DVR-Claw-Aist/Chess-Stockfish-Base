@@ -7,7 +7,7 @@ import MoveHistory from './MoveHistory.jsx';
 import ClockDisplay from './ClockDisplay.jsx';
 import TimeControlSelector from './TimeControlSelector.jsx';
 import DifficultySelector from './DifficultySelector.jsx';
-import { playSound, setSoundEnabled, isSoundEnabled } from '../lib/sounds.js';
+import { playSound, setSoundEnabled } from '../lib/sounds.js';
 
 function Game() {
   const [board, setBoard] = useState([]);
@@ -40,7 +40,23 @@ function Game() {
   useEffect(() => { roomIdRef.current = roomId; }, [roomId]);
 
   useEffect(() => {
-    socket.on('connect', () => setConnected(true));
+    socket.on('connect', () => {
+      setConnected(true);
+      if (roomIdRef.current) {
+        setFenState('');
+        setTurn('w');
+        setIsCheck(false);
+        setIsCheckmate(false);
+        setIsDraw(false);
+        setIsGameOver(false);
+        setBoard([]);
+        setRoomId(null);
+        setHistory([]);
+        setClocks(null);
+        setClockActive(null);
+        setGameState('idle');
+      }
+    });
     socket.on('disconnect', () => setConnected(false));
 
     socket.on('game_state', (state) => {
@@ -152,8 +168,8 @@ function Game() {
 
   return (
     <div className="game">
-      <div className={`connection-status ${connected ? 'on' : 'off'}`}>
-        {connected ? 'connected' : 'disconnected'}
+      <div className={`connection-status ${connected ? 'on' : roomId ? 'reconnecting' : 'off'}`}>
+        {connected ? 'connected' : roomId ? 'reconnecting...' : 'disconnected'}
       </div>
       <div className="game-board-col">
         {clocks && (

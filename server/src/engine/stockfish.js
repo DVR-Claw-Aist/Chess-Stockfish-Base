@@ -22,6 +22,10 @@ export class StockfishEngine {
 
   start() {
     return new Promise((resolve, reject) => {
+      if (this.process) {
+        this.quit();
+      }
+
       this.process = spawn(this.binPath, [], { stdio: ['pipe', 'pipe', 'pipe'] });
       this.rl = readline.createInterface({ input: this.process.stdout });
 
@@ -29,7 +33,11 @@ export class StockfishEngine {
         if (line.includes('Stockfish')) resolve();
       });
 
-      this.process.on('error', reject);
+      this.process.on('error', (err) => {
+        this.process = null;
+        this.rl = null;
+        reject(err);
+      });
       this.process.stdin.write('uci\n');
     });
   }
@@ -39,9 +47,18 @@ export class StockfishEngine {
     const timeoutMs = options.timeout || 30000;
 
     return new Promise((resolve, reject) => {
+      if (!this.process) {
+        reject(new Error('engine not started'));
+        return;
+      }
+
       const timer = setTimeout(() => {
         this.rl.removeAllListeners('line');
-        if (this.process) this.process.kill();
+        if (this.process) {
+          this.process.kill();
+          this.process = null;
+        }
+        this.rl = null;
         reject(new Error('stockfish timeout'));
       }, timeoutMs);
 
@@ -57,7 +74,12 @@ export class StockfishEngine {
       };
 
       this.rl.on('line', handler);
-      this.process.on('error', (err) => { clearTimeout(timer); reject(err); });
+      this.process.on('error', (err) => {
+        clearTimeout(timer);
+        this.process = null;
+        this.rl = null;
+        reject(err);
+      });
     });
   }
 
@@ -66,7 +88,7 @@ export class StockfishEngine {
       this.process.stdin.write('quit\n');
       this.process.kill();
       this.process = null;
-      this.rl = null;
     }
+    this.rl = null;
   }
 }

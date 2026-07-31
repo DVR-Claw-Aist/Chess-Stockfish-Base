@@ -15,6 +15,8 @@ const io = new Server(httpServer, {
     origin: process.env.CLIENT_ORIGIN || '*',
     methods: ['GET', 'POST'],
   },
+  pingInterval: 25000,
+  pingTimeout: 20000,
 });
 
 io.use((socket, next) => {

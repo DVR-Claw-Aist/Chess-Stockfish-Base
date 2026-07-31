@@ -47,7 +47,7 @@ The app runs as a [Telegram Mini App](https://core.telegram.org/bots/webapps). T
 
 - **Server chess.js** is the single source of truth for all position validation and game logic.
 - **Client chess.js** is used only for legal-move display and board rendering.
-- **Stockfish** runs as a child process (one per game). Communication via UCI protocol over stdin/stdout.
+- **Stockfish** runs as a child process per game, capped by `MAX_ENGINES` (default 4). Communication via UCI protocol over stdin/stdout.
 - **Clocks** are decremented server-side every 100 ms and broadcast to the client.
 
 ## Tech Stack
@@ -80,12 +80,13 @@ npm install
 
 Place the Stockfish binary at `server/bin/stockfish/stockfish-windows-x86-64-sse41-popcnt.exe` (or adjust the path in `stockfish.js`).
 
-Create `server/.env`:
+Create `server/.env` (copy from `server/.env.example`):
 
 ```
 PORT=3000
 CLIENT_ORIGIN=http://localhost:5173
 TELEGRAM_BOT_TOKEN=your_bot_token  # optional — auth is skipped if empty
+MAX_ENGINES=4                      # max concurrent Stockfish processes
 ```
 
 Run both server and client:
@@ -100,6 +101,11 @@ npm run dev
 | `npm start` | Server only |
 | `npm run dev:server` | Server only (--watch) |
 | `npm run dev:client` | Client only (Vite) |
+| `npm test --workspace=server` | Engine smoke test (needs Stockfish binary) |
+
+## Tests
+
+`server/test/engine.test.mjs` starts a Stockfish process and requests a best move from the starting position. Requires the binary at `server/bin/stockfish/` (see Installation).
 
 ## Roadmap
 
@@ -109,3 +115,9 @@ npm run dev
 - [ ] Takeback and draw offers
 - [ ] Multiplayer (human vs human)
 - [ ] i18n (EN / RU)
+
+## License
+
+Released under the [GNU General Public License v3.0](LICENSE).
+
+The bundled [Stockfish](server/bin/stockfish/) engine is distributed under the GPL-3.0 license (see `server/bin/stockfish/Copying.txt`).

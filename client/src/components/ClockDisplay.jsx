@@ -1,6 +1,6 @@
 import { formatClock } from '../lib/time.js';
 
-function ClockDisplay({ clocks, active, turn, gameOver, isCheckmate }) {
+function ClockDisplay({ clocks, active, turn: _turn, gameOver, isCheckmate }) {
   function expired(color) {
     return (gameOver && clocks?.[color] <= 0) || isCheckmate;
   }

@@ -1,5 +1,6 @@
 import { Chess } from 'chess.js';
 import { StockfishEngine } from '../engine/stockfish.js';
+import { acquire, release } from '../engine/pool.js';
 
 const DEPTH_MAP = { easy: 4, medium: 10, hard: 18 };
 
@@ -75,28 +76,62 @@ export class GameRoom {
   }
 
   async getBestMove() {
+    if (this._engineBusy) return null;
+
     const fenBefore = this.chess.fen();
     this.fenHistory.push({ fen: fenBefore, histLen: this.chess.history().length });
 
-    if (!this.stockfish) {
-      this.stockfish = new StockfishEngine();
-      await this.stockfish.start();
+    await acquire();
+    this._engineBusy = true;
+    try {
+      if (!this.stockfish) {
+        this.stockfish = new StockfishEngine();
+        await this.stockfish.start();
+      }
+
+      const depth = DEPTH_MAP[this.difficulty] || 10;
+      const engineMove = await this.stockfish.getBestMove(fenBefore, { depth });
+
+      if (this.chess.fen() !== fenBefore) {
+        this.fenHistory.pop();
+        return null;
+      }
+
+      if (!engineMove || engineMove === '(none)') {
+        return this._gameOverResult();
+      }
+
+      const move = this.chess.move(engineMove);
+      this._addIncrement(this.chess.turn() === 'w' ? 'b' : 'w');
+      this._stopTicking();
+      if (this.clocks && !this.chess.isGameOver()) this._startTicking();
+
+      return this._moveResult(move);
+    } catch (err) {
+      if (this.stockfish) {
+        try { this.stockfish.quit(); } catch { /* ignore */ }
+        this.stockfish = null;
+      }
+      throw err;
+    } finally {
+      this._engineBusy = false;
+      release();
     }
+  }
 
-    const depth = DEPTH_MAP[this.difficulty] || 10;
-    const engineMove = await this.stockfish.getBestMove(fenBefore, { depth });
-
-    if (this.chess.fen() !== fenBefore) {
-      this.fenHistory.pop();
-      return null;
-    }
-
-    const move = this.chess.move(engineMove);
-    this._addIncrement(this.chess.turn() === 'w' ? 'b' : 'w');
+  _gameOverResult() {
     this._stopTicking();
-    if (this.clocks && !this.chess.isGameOver()) this._startTicking();
-
-    return this._moveResult(move);
+    this.state = 'gameover';
+    return {
+      fen: this.chess.fen(),
+      move: null,
+      turn: this.chess.turn(),
+      isCheck: this.chess.isCheck(),
+      isCheckmate: this.chess.isCheckmate(),
+      isDraw: this.chess.isDraw(),
+      isGameOver: true,
+      history: this.chess.history({ verbose: true }),
+    };
   }
 
   _moveResult(move) {

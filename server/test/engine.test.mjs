@@ -1,4 +1,4 @@
-import { StockfishEngine } from './stockfish.js';
+import { StockfishEngine } from '../src/engine/stockfish.js';
 
 const engine = new StockfishEngine();
 

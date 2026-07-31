@@ -15,6 +15,7 @@
 }
 .connection-status.on { color: #2e7d32; }
 .connection-status.off { color: #c62828; }
+.connection-status.reconnecting { color: #e65100; }
 
 .board {
   display: grid;
