@@ -7,4 +7,3 @@ Thumbs.db
 server/bin/stockfish/*.exe
 AGENTS.md
 .idea/
-list.md
