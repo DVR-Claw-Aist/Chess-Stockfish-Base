@@ -1,3 +1,9 @@
+/**
+ * Renders a single board square.
+ * @param {{ piece?: string, isLight?: boolean, isSelected?: boolean, isLegal?: boolean,
+ *   isCheck?: boolean, isMate?: boolean, onClick?: () => void }} props
+ * @returns {JSX.Element}
+ */
 function Square({ piece, isLight, isSelected, isLegal, isCheck, isMate, onClick }) {
   const className = [
     'square',

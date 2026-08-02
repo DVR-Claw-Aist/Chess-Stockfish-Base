@@ -1,5 +1,11 @@
 import { TIME_PRESETS } from '../lib/time.js';
 
+/**
+ * Renders a dropdown of predefined time controls.
+ * @param {{ value?: { initial: number, increment: number } | null,
+ *   onChange: (tc: { initial: number, increment: number }) => void }} props
+ * @returns {JSX.Element}
+ */
 function TimeControlSelector({ value, onChange }) {
   return (
     <div className="tc-selector">

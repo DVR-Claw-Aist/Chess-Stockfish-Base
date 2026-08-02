@@ -3,6 +3,10 @@ import { themeParams } from '@telegram-apps/sdk'
 import Game from './components/Game.jsx'
 import './App.css'
 
+/**
+ * Root component. Maps Telegram theme params to CSS variables on mount.
+ * @returns {JSX.Element}
+ */
 function App() {
   useEffect(() => {
     let tp

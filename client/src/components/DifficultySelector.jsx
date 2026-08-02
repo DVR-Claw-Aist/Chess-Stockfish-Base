@@ -1,3 +1,8 @@
+/**
+ * Renders buttons for choosing engine difficulty.
+ * @param {{ value?: string, onChange: (difficulty: string) => void }} props
+ * @returns {JSX.Element}
+ */
 function DifficultySelector({ value, onChange }) {
   return (
     <div className="difficulty-selector">

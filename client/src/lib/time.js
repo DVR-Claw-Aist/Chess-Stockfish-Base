@@ -1,3 +1,8 @@
+/**
+ * Formats seconds as a `mm:ss` clock string.
+ * @param {number | null | undefined} seconds
+ * @returns {string} Formatted time, or `--:--` when null/undefined.
+ */
 export function formatClock(seconds) {
   if (seconds == null) return '--:--';
   const m = Math.floor(seconds / 60);
@@ -5,6 +10,11 @@ export function formatClock(seconds) {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
+/**
+ * @typedef {{ label: string, initial: number, increment: number }} TimePreset
+ */
+
+/** @type {TimePreset[]} */
 export const TIME_PRESETS = [
   { label: 'Bullet 1+0', initial: 60, increment: 0 },
   { label: 'Bullet 1+1', initial: 60, increment: 1 },

@@ -1,3 +1,8 @@
+/**
+ * Renders the move list as numbered white/black rows.
+ * @param {{ history?: Array<{ san?: string }> }} props
+ * @returns {JSX.Element | null}
+ */
 function MoveHistory({ history }) {
   if (!history || history.length === 0) return null;
 

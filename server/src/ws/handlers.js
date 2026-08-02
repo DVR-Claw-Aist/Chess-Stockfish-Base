@@ -1,5 +1,10 @@
 import { createRoom, getRoom, removeRoom, addSocketToRoom, removeSocketFromRoom } from '../game/manager.js';
 
+/**
+ * Registers all Socket.IO event handlers.
+ * @param {import('socket.io').Server} io
+ * @returns {void}
+ */
 export function registerHandlers(io) {
   io.on('connection', (socket) => {
     socket.on('join_game', async ({ mode = 'stockfish', playerColor = 'w', timeControl, difficulty = 'medium', autoStart } = {}) => {

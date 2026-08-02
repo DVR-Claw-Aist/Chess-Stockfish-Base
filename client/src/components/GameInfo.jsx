@@ -1,3 +1,11 @@
+/**
+ * Renders game status, color picker, and action buttons.
+ * @param {{ fen?: string, turn?: string, isCheck?: boolean, isCheckmate?: boolean,
+ *   isDraw?: boolean, isGameOver?: boolean, playerColor?: string, gameState?: string,
+ *   onColorChange?: (color: string) => void, onStart?: () => void, onNewGame?: () => void,
+ *   onUndo?: () => void, soundEnabled?: boolean, onSoundToggle?: () => void }} props
+ * @returns {JSX.Element}
+ */
 function GameInfo({ fen, turn, isCheck, isCheckmate, isDraw, isGameOver, connected: _connected, playerColor, gameState, onColorChange, onStart, onNewGame, onUndo, soundEnabled, onSoundToggle }) {
   return (
     <div className="game-info">

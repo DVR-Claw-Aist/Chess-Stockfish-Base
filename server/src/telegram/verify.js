@@ -1,7 +1,14 @@
 import { createHmac, timingSafeEqual } from 'crypto';
 
+/** Max allowed age of initData, ms. */
 const MAX_INIT_DATA_AGE_MS = 60 * 60 * 1000;
 
+/**
+ * Verifies Telegram WebApp initData via HMAC-SHA256 and the bot token.
+ * @param {string} initData Raw Telegram initData string.
+ * @param {string} [botToken] Bot token; if empty, verification is skipped and `true` returned.
+ * @returns {boolean} True if data is valid (or no token configured).
+ */
 export function verifyInitData(initData, botToken) {
   if (!botToken) return true;
 

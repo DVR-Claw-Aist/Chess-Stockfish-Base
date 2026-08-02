@@ -13,6 +13,7 @@ config({ path: resolve(__dirname, '..', '.env') });
 
 const app = express();
 const httpServer = createServer(app);
+/** @type {import('socket.io').Server} */
 const io = new Server(httpServer, {
   cors: {
     origin: process.env.CLIENT_ORIGIN || '*',
@@ -22,6 +23,12 @@ const io = new Server(httpServer, {
   pingTimeout: 20000,
 });
 
+/**
+ * Socket.IO auth middleware: verifies Telegram initData when a bot token is configured.
+ * @param {import('socket.io').Socket} socket
+ * @param {(err?: Error) => void} next
+ * @returns {void}
+ */
 io.use((socket, next) => {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   if (!token) return next();

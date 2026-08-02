@@ -9,6 +9,18 @@ import TimeControlSelector from './TimeControlSelector.jsx';
 import DifficultySelector from './DifficultySelector.jsx';
 import { playSound, setSoundEnabled } from '../lib/sounds.js';
 
+/**
+ * @typedef {import('../../lib/time.js').TimePreset} TimePreset
+ * @typedef {{ w: number, b: number }} Clocks
+ * @typedef {{ fen: string, move?: { from: string, to: string, san: string, promotion?: string } | null,
+ *   turn: string, isCheck: boolean, isCheckmate: boolean, isDraw: boolean, isGameOver: boolean,
+ *   history?: Array<{ san: string }> }} MoveResult
+ */
+
+/**
+ * Main game container: manages Socket.IO state, game state and UI wiring.
+ * @returns {JSX.Element}
+ */
 function Game() {
   const [board, setBoard] = useState([]);
   const [fen, setFenState] = useState('');
@@ -35,6 +47,7 @@ function Game() {
       return next;
     });
   }, []);
+  /** @type {import('react').MutableRefObject<string | null>} */
   const roomIdRef = useRef(null);
 
   useEffect(() => { roomIdRef.current = roomId; }, [roomId]);
@@ -75,6 +88,11 @@ function Game() {
       setClocks(state.clocks || null);
     });
 
+    /**
+     * Plays the sound matching a move result.
+     * @param {MoveResult} result
+     * @returns {void}
+     */
     function handleSound(result) {
       if (result.isCheckmate) playSound('checkmate');
       else if (result.isCheck) playSound('check');
@@ -137,6 +155,15 @@ function Game() {
     socket.emit('join_game', { mode: 'stockfish', playerColor, timeControl, difficulty, autoStart: true });
   }, [playerColor, timeControl, difficulty]);
 
+  /**
+   * Sends a move to the server. Board coords are 0-7; converts to algebraic squares.
+   * @param {number} fromR Source row.
+   * @param {number} fromC Source column.
+   * @param {number} toR Target row.
+   * @param {number} toC Target column.
+   * @param {string} [promotion]
+   * @returns {void}
+   */
   const handleMove = useCallback((fromR, fromC, toR, toC, promotion) => {
     if (!roomId) return;
     const from = 'abcdefgh'[fromC] + (8 - fromR);
